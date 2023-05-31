@@ -31,7 +31,7 @@ const IndexPage: NextPage = () => {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!apiKey) return
-    setMessage("Requesting...")
+    setMessage("変換中めう...")
     setResponse(undefined)
     localStorage.setItem(LOCAL_STORAGE_KEY_API_KEY, apiKey)
     try {
@@ -50,31 +50,42 @@ const IndexPage: NextPage = () => {
         }
       )
       if (data.choices.length > 0) {
-        setMessage("Succeed generate.")
+        setMessage("変換成功めう！")
         setResponse(data)
       } else {
-        throw "Invalid response"
+        throw "生成失敗めう..."
       }
     } catch (e) {
-      setMessage(`Error: ${e}`)
+      setMessage(`エラーめう... (${e})`)
     }
   }
   return (
     <>
-      <section style={{ padding: "2rem" }}>
-        <h1 style={{ textAlign: "center" }}>Text to Meu Meu</h1>
+      <section
+        style={{ padding: "4rem 2rem", maxWidth: "720px", margin: "auto" }}
+      >
+        <h1
+          style={{
+            textAlign: "center",
+            marginBottom: "2rem",
+            borderBottom: "2px solid pink",
+            fontSize: "2rem",
+          }}
+        >
+          めう語生成機
+        </h1>
         <form
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            maxWidth: "720px",
             margin: "auto",
+            padding: "2rem 0",
           }}
           onSubmit={submit}
         >
           <input
-            placeholder="APIKey"
+            placeholder="API Keyをいれるめう!"
             type="password"
             style={{
               fontSize: "1.5rem",
@@ -87,7 +98,7 @@ const IndexPage: NextPage = () => {
           />
           <textarea
             rows={4}
-            placeholder="Poem"
+            placeholder="変換したい文章を入力するめう!"
             style={{
               fontSize: "1.5rem",
               padding: ".5rem 1rem",
@@ -100,25 +111,29 @@ const IndexPage: NextPage = () => {
           <button
             style={{
               padding: "1rem 2rem",
-              backgroundColor: "green",
+              backgroundColor: "pink",
               color: "white",
               borderRadius: "5px",
               border: "none",
               fontSize: "1.5rem",
+              cursor: "pointer",
             }}
             disabled={!body || !apiKey}
           >
-            Generate
+            変換するめう！
           </button>
         </form>
-        <div style={{ maxWidth: "720px", margin: "1rem auto" }}>
+        <div
+          style={{
+            margin: "1rem auto",
+          }}
+        >
           {message && (
             <p
               style={{
-                display: "inline-block",
-                color: "red",
-                fontSize: "1.25rem",
+                color: "gray",
                 padding: ".5rem",
+                textAlign: "center",
               }}
             >
               {message}
@@ -127,7 +142,10 @@ const IndexPage: NextPage = () => {
           {response && response.choices.length > 0 && (
             <>
               {response.choices.map((choice) => (
-                <p key={choice.index} style={{ fontSize: "2rem" }}>
+                <p
+                  key={choice.index}
+                  style={{ fontSize: "2rem", borderBottom: "solid pink 2px" }}
+                >
                   {choice.text}
                 </p>
               ))}
@@ -135,6 +153,25 @@ const IndexPage: NextPage = () => {
           )}
         </div>
       </section>
+      <footer
+        style={{
+          background: "pink",
+          marginTop: "4rem",
+          padding: "4rem",
+          textAlign: "center",
+          color: "white",
+        }}
+      >
+        @kixixixixi
+        <p>
+          <a
+            href="//github.com/kixixixixi/txt2meu"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            View on Github
+          </a>
+        </p>
+      </footer>
     </>
   )
 }
