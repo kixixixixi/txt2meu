@@ -6,17 +6,24 @@ import axios from "axios"
 const LOCAL_STORAGE_KEY_API_KEY = "OPENAI_API_KEY" as const
 
 type ImageGenerationResponse = {
+  object: "edit"
   created: number
-  data: {
-    url: string
+  choices: {
+    text: string
+    index: number
   }[]
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
 }
 
 const IndexPage: NextPage = () => {
   const [apiKey, setApiKey] = useState<string>()
-  const [poem, setPoem] = useState<string>()
+  const [body, setBody] = useState<string>()
   const [message, setMessage] = useState<string>()
-  const [url, setUrl] = useState<string>()
+  const [response, setResponse] = useState<ImageGenerationResponse>()
   useEffect(() => {
     const storageApiKey = localStorage.getItem(LOCAL_STORAGE_KEY_API_KEY)
     if (storageApiKey) setApiKey(storageApiKey)
@@ -25,16 +32,16 @@ const IndexPage: NextPage = () => {
     event.preventDefault()
     if (!apiKey) return
     setMessage("Requesting...")
-    setUrl(undefined)
+    setResponse(undefined)
     localStorage.setItem(LOCAL_STORAGE_KEY_API_KEY, apiKey)
     try {
-      const {
-        data: { data },
-      } = await axios.post<ImageGenerationResponse>(
-        "https://api.openai.com/v1/images/generations",
+      const { data } = await axios.post<ImageGenerationResponse>(
+        "https://api.openai.com/v1/edits",
         {
-          prompt: `以下の歌詞を使った楽曲のジャケット写真を生成: \`${poem}\``,
-          size: "256x256",
+          model: "text-davinci-edit-001",
+          input: body,
+          instruction:
+            "語尾の敬語を除き、連体形に変更し最後に「めう」とつける。わたしなどの一人称を「めう」に変更。",
         },
         {
           headers: {
@@ -42,9 +49,9 @@ const IndexPage: NextPage = () => {
           },
         }
       )
-      if (data.length == 1) {
+      if (data.choices.length > 0) {
         setMessage("Succeed generate.")
-        setUrl(data[0].url)
+        setResponse(data)
       } else {
         throw "Invalid response"
       }
@@ -55,7 +62,7 @@ const IndexPage: NextPage = () => {
   return (
     <>
       <section style={{ padding: "2rem" }}>
-        <h1 style={{ textAlign: "center" }}>Poem to Image</h1>
+        <h1 style={{ textAlign: "center" }}>Text to Meu Meu</h1>
         <form
           style={{
             display: "flex",
@@ -87,8 +94,8 @@ const IndexPage: NextPage = () => {
               width: "100%",
               marginBottom: "10px",
             }}
-            value={poem}
-            onChange={(e) => setPoem(e.target.value)}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
           />
           <button
             style={{
@@ -99,7 +106,7 @@ const IndexPage: NextPage = () => {
               border: "none",
               fontSize: "1.5rem",
             }}
-            disabled={!poem || !apiKey}
+            disabled={!body || !apiKey}
           >
             Generate
           </button>
@@ -117,16 +124,14 @@ const IndexPage: NextPage = () => {
               {message}
             </p>
           )}
-          {url && (
-            <img
-              alt="Generated image"
-              src={url}
-              style={{
-                display: "block",
-                width: "100%",
-                maxHeight: "720px",
-              }}
-            />
+          {response && response.choices.length > 0 && (
+            <>
+              {response.choices.map((choice) => (
+                <p key={choice.index} style={{ fontSize: "2rem" }}>
+                  {choice.text}
+                </p>
+              ))}
+            </>
           )}
         </div>
       </section>

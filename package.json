@@ -1,7 +1,6 @@
 {
-  "name": "poem2image",
+  "name": "txt2meu",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "dev": "next -p 3333",
