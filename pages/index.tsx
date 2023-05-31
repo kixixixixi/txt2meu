@@ -41,7 +41,7 @@ const IndexPage: NextPage = () => {
           model: "text-davinci-edit-001",
           input: body,
           instruction:
-            "語尾の敬語を除き、連体形に変更し最後に「めう」とつける。わたしなどの一人称を「めう」に変更。",
+            "一人称が省略されていれば追加。敬語を除く。語尾の連体形に変更し最後に「めう」とつける。わたしや俺などの一人称を「めう」に変更。",
         },
         {
           headers: {
