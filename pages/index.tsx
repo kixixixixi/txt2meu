@@ -72,7 +72,7 @@ const IndexPage: NextPage = () => {
             fontSize: "2rem",
           }}
         >
-          めう語生成機
+          めう語生成機(α)
         </h1>
         <form
           style={{
@@ -85,7 +85,7 @@ const IndexPage: NextPage = () => {
           onSubmit={submit}
         >
           <input
-            placeholder="API Keyをいれるめう!"
+            placeholder="OPENAIのAPI Keyをいれるめう!"
             type="password"
             style={{
               fontSize: "1.5rem",
